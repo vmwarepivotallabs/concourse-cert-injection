@@ -1,0 +1,62 @@
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+- name: platform-automation
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: platform-automation
+
+- name: docker-image-resource
+  type: git
+  source:
+    uri: git@github.com:concourse/docker-image-resource.git
+
+- name: source
+  type: git
+  source:
+    uri: git@github.com:vmwarepivotallabs/concourse-cert-injection.git
+    branch: master
+    private_key: ((git_ssh_key))
+
+jobs:
+- name: pull-assets
+  plan:
+  - aggregate:
+    - get: platform-automation-image
+      resource: platform-automation
+      params:
+        unpack: true
+        globs: ["*image*"]
+    - get: platform-automation-tasks
+      resource: platform-automation
+      params:
+        unpack: true
+        globs: ["*tasks*"]
+  - task: inject-certs
+    file: source/tasks/inject-cert/task.yml
+    
+
+  - task: download-product
+    image: platform-automation-image
+    config:
+      platform: linux
+      params: 
+        PIVNET_TOKEN: ((pivnet_token))
+      run:
+        path: bash
+        args:
+        - -ec
+        - |
+          echo "ssl verification disabled"
+          om download-product -o . -t ${PIVNET_TOKEN} -f "*tasks*" -p platform-automation  -v "4.3.4" --pivnet-disable-ssl
+          echo "ssl verification enabled"
+          om download-product -o . -t ${PIVNET_TOKEN} -f "*tasks*" -p platform-automation  -v "4.3.4"
+
+
+  
