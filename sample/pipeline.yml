@@ -27,7 +27,7 @@ jobs:
     - get: platform-automation-image
       resource: platform-automation
       params:
-        #don't unpack yet
+        #don't unpack
         unpack: false
         globs: ["*image*"]
     - get: platform-automation-tasks
@@ -35,6 +35,7 @@ jobs:
       params:
         unpack: true
         globs: ["*tasks*"]
+
   - task: inject-certs
     file: source/tasks/image-file/task.yml
     # must be privileged: true to run docker
@@ -57,9 +58,6 @@ jobs:
         args:
         - -ec
         - |
-          echo "ssl verification disabled"
-          om download-product -o . -t ${PIVNET_TOKEN} -f "*tasks*" -p platform-automation  -v "4.3.4" --pivnet-disable-ssl
-          echo "ssl verification enabled"
           om download-product -o . -t ${PIVNET_TOKEN} -f "*tasks*" -p platform-automation  -v "4.3.4"
 
 
