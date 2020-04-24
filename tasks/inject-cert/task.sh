@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 source /opt/resource/common.sh
 start_docker
