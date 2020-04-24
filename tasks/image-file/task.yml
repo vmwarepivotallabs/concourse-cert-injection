@@ -13,4 +13,4 @@ inputs:
   - name: source
   - name: image
 outputs:
-  - name: modified-image
+  - name: modified

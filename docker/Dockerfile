@@ -1,4 +1,4 @@
-FROM existing:latest
+FROM current:latest
 
 ARG ca_pem
 

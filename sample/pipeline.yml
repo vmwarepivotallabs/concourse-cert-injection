@@ -42,7 +42,7 @@ jobs:
     input_mapping:
       image: platform-automation-image
     output_mapping:
-      modified-image: new-platform-automation-image
+      modified: new-platform-automation-image
   
   - task: download-product
     image: new-platform-automation-image
