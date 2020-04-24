@@ -12,11 +12,6 @@ resources:
     api_token: ((pivnet_token))
     product_slug: platform-automation
 
-- name: docker-image-resource
-  type: git
-  source:
-    uri: git@github.com:concourse/docker-image-resource.git
-
 - name: source
   type: git
   source:
@@ -28,6 +23,7 @@ jobs:
 - name: pull-assets
   plan:
   - aggregate:
+    - get: source
     - get: platform-automation-image
       resource: platform-automation
       params:

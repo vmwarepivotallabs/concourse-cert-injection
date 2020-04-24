@@ -6,6 +6,6 @@ image_resource:
 params:
   SKIP_PRIVILEGED: false
 run:
-  path: source/tasks/task.sh
+  path: source/tasks/inject-cert/task.sh
 inputs:
   - name: source
