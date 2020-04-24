@@ -10,19 +10,10 @@ image_file="$(find image/*.tgz 2>/dev/null | head -n1)"
 echo "importing ${image_file} as current:latest"
 docker import "${image_file}" current:latest
 
-define DOCKERFILE <<'EOF'
-FROM current:latest
-
-ARG ca_pem
-
-RUN echo "${ca_pem}" > /usr/local/share/ca-certificates/custom.crt \
-  && update-ca-certificates
-EOF
-
-echo "${DOCKERFILE}" > Dockerfile
-
-docker build --build-arg ca_pem="${CA_PEM}" -t modified:latest .
-docker images
+pushd source/docker
+   docker build --build-arg ca_pem="${CA_PEM}" -t modified:latest .
+   docker images
+popd
 
 docker run \
     --cidfile=/tmp/container.cid \
