@@ -16,7 +16,7 @@ pushd source/docker
 popd
 
 pushd modified-image
-  docker export new-image:latest > latest.tgz
+  docker save -o latest.tgz new-image:latest
   tar -xvf latest.tgz
   rm latest.tgz
 popd 
