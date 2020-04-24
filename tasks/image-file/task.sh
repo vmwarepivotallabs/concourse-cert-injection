@@ -15,4 +15,11 @@ pushd source/docker
    docker images
 popd
 
+pushd modified-image
+  docker export new-image:latest > latest.tgz
+  tar -xvf latest.tgz
+  rm latest.tgz
+popd 
+
+
 stop_docker

@@ -41,9 +41,11 @@ jobs:
     privileged: true
     input_mapping:
       image: platform-automation-image
+    output_mapping:
+      modified-image: new-platform-automation-image
   
   - task: download-product
-    image: platform-automation-image
+    image: new-platform-automation-image
     config:
       platform: linux
       params: 
