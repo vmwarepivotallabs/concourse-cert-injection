@@ -6,7 +6,11 @@ image_resource:
     tag: ubuntu
 params:
   SKIP_PRIVILEGED: false
+  UNPACK: true
 run:
-  path: source/tasks/inject-cert/task.sh
+  path: source/tasks/image-file/task.sh
 inputs:
   - name: source
+  - name: image
+outputs:
+  - name: modified-image

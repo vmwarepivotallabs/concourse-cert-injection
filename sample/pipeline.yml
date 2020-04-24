@@ -27,7 +27,8 @@ jobs:
     - get: platform-automation-image
       resource: platform-automation
       params:
-        unpack: true
+        #don't unpack yet
+        unpack: false
         globs: ["*image*"]
     - get: platform-automation-tasks
       resource: platform-automation
@@ -35,9 +36,11 @@ jobs:
         unpack: true
         globs: ["*tasks*"]
   - task: inject-certs
-    file: source/tasks/inject-cert/task.yml
+    file: source/tasks/image-file/task.yml
     # must be privileged: true to run docker
     privileged: true
+    input_mapping:
+      image: platform-automation-image
   
   - task: download-product
     image: platform-automation-image
