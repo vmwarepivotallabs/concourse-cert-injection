@@ -11,7 +11,7 @@ echo "importing ${image_file} as current:latest"
 docker import "${image_file}" current:latest
 
 pushd source/docker
-   docker build --build-arg ca_pem=${CA_PEM} -t modified:latest .
+   docker build --build-arg ca_pem="${CA_PEM}" -t modified:latest .
    docker images
 popd
 
@@ -26,6 +26,5 @@ docker run \
 
 mkdir -p modified/rootfs/
 docker export $(cat /tmp/container.cid) | tar --exclude="dev/*" -xf - -C modified/rootfs/
-
 
 stop_docker
