@@ -43,6 +43,8 @@ jobs:
       image: platform-automation-image
     output_mapping:
       modified: new-platform-automation-image
+    params:
+      CA_PEM: ((ca_cert))
   
   - task: download-product
     image: new-platform-automation-image

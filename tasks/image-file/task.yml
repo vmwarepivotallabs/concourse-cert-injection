@@ -6,7 +6,7 @@ image_resource:
     tag: ubuntu
 params:
   SKIP_PRIVILEGED: false
-  UNPACK: true
+  CA_PEM:
 run:
   path: source/tasks/image-file/task.sh
 inputs:
