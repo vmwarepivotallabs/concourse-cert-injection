@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 source /opt/resource/common.sh
 
@@ -9,5 +9,10 @@ start_docker ${max_concurrent_downloads} ${max_concurrent_uploads}
 image_file="$(find image/*.tgz 2>/dev/null | head -n1)"
 echo "importing ${image_file} as existing:latest"
 docker import "${image_file}" existing:latest
+
+pushd source/docker
+   docker build --build-arg ca_pem=${CA_PEM} -t new-image:latest .
+   docker images
+popd
 
 stop_docker
