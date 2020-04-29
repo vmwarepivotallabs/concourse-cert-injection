@@ -1,3 +1,4 @@
+---
 platform: linux
 image_resource:
   type: docker-image
@@ -5,12 +6,50 @@ image_resource:
     repository: concourse/docker-image-resource
     tag: ubuntu
 params:
-  SKIP_PRIVILEGED: false
   CA_PEM:
-run:
-  path: source/tasks/image-file/task.sh
 inputs:
-  - name: source
   - name: image
 outputs:
   - name: modified
+run:
+  path: bash
+  args: 
+  - "-c"
+  - |
+    # source env
+    source /opt/resource/common.sh
+
+    # start docker
+    max_concurrent_downloads=3
+    max_concurrent_uploads=3
+    start_docker ${max_concurrent_downloads} ${max_concurrent_uploads}
+
+    # import docker container filesystem from tgz
+    image_file="$(find image/*.tgz 2>/dev/null | head -n1)"
+    echo "importing ${image_file} as current:latest"
+    docker import "${image_file}" current:latest
+
+    # build Dockerfile
+    cat << 'EOF' > Dockerfile
+    FROM current:latest
+    ARG ca_pem
+    RUN echo "${ca_pem}" > /usr/local/share/ca-certificates/custom.crt \
+      && update-ca-certificates
+    EOF
+
+    # build docker image with CA as runtime arg
+    docker build --build-arg ca_pem="${CA_PEM}" -t modified:latest .
+    docker images
+
+    # extract metadata from image
+    docker run \
+      --cidfile=/tmp/container.cid \
+      -v /opt/resource/print-metadata:/tmp/print-metadata \
+      --entrypoint /tmp/print-metadata  \
+      modified:latest > modified/metadata.json
+
+    # export the container filesystem and untar to output
+    mkdir -p modified/rootfs/
+    docker export $(cat /tmp/container.cid) | tar --exclude="dev/*" -xf - -C modified/rootfs/
+    echo "Succesfully exported WCF image"
+    stop_docker
