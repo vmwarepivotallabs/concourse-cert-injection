@@ -51,5 +51,5 @@ run:
     # export the container filesystem and untar to output
     mkdir -p modified/rootfs/
     docker export $(cat /tmp/container.cid) | tar --exclude="dev/*" -xf - -C modified/rootfs/
-    echo "Succesfully exported WCF image"
+    echo "Succesfully exported image"
     stop_docker
